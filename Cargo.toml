@@ -8,10 +8,9 @@ edition = "2018"
 
 [dependencies]
 bitcoin = "0.23.0"
-ledger-transport-hid = { git = "https://github.com/Zondax/ledger-rs", branch = "master" }
-ledger-apdu = { git = "https://github.com/Zondax/ledger-rs", branch = "master" }
 anyhow = "1"
-pretty_env_logger = "0.4.0"
+bitcoins-ledger = { path = "/home/thomas/src/github.com/summa-tx/bitcoins-rs/ledger-btc" }
+coins-bip32 = { path = "/home/thomas/src/github.com/summa-tx/bitcoins-rs/bip32" }
 
 [dev-dependencies]
 tokio = {version = "0.2", features = ["macros"]}
