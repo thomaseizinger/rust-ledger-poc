@@ -1,0 +1,73 @@
+pub mod hid;
+mod status;
+
+use async_trait::async_trait;
+
+pub use status::Status;
+
+#[async_trait]
+pub trait Transport {
+    type Error;
+    async fn exchange(&self, req: &[u8]) -> Result<Vec<u8>, Self::Error>;
+
+    // wrapper on top of exchange.
+    async fn send(
+        &self,
+        cla: u8,
+        ins: u8,
+        p1: u8,
+        p2: u8,
+        data: &[u8],
+    ) -> Result<(Vec<u8>, Status), Error<Self::Error>> {
+        let mut request = vec![cla, ins, p1, p2, data.len() as u8];
+        request.extend(data);
+        let mut res = self
+            .exchange(&request)
+            .await
+            .map_err(|e| Error::Transport::<Self::Error>(e))?;
+        if res.len() < 2 {
+            return Err(Error::ResponseTooShort);
+        }
+        let status = res.split_off(res.len() - 2);
+        let code = (status[0] as u16) << 8 | status[1] as u16;
+        Ok((res, code.into()))
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Error<T> {
+    ResponseTooShort,
+    Transport(T),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use async_trait::async_trait;
+
+    #[derive(Clone)]
+    pub enum MockError {
+        _MockNotFound,
+    }
+
+    #[derive(Clone)]
+    struct Mock {
+        result: Result<Vec<u8>, MockError>,
+    }
+    #[async_trait]
+    impl Transport for Mock {
+        type Error = MockError;
+        async fn exchange(&self, _req: &[u8]) -> Result<Vec<u8>, Self::Error> {
+            self.result.clone()
+        }
+    }
+    #[tokio::test]
+    async fn transport_send() {
+        let mock = Mock {
+            result: Ok(vec![3, 0, 1]),
+        };
+        if let Ok((res, _)) = mock.send(0x00, 0x00, 0x00, 0x00, &Vec::new()).await {
+            assert_eq!(vec![3], res);
+        }
+    }
+}

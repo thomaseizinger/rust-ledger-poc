@@ -1,0 +1,17 @@
+[package]
+name = "ledger_nano_s_poc"
+version = "0.1.0"
+authors = ["Thomas Eizinger <thomas@eizinger.io>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bitcoin = "0.23.0"
+async-trait = "0.1"
+byteorder = "1.3.4"
+hidapi = { version = "1.2.0", default-features = false, features = ["linux-static-hidraw"] }
+libc = "0.2.50"
+
+[dev-dependencies]
+tokio = {version = "0.2", features = ["macros"]}
