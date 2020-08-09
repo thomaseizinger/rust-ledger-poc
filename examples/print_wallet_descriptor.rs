@@ -1,13 +1,17 @@
 use bitcoin::util::bip32::{ChainCode, ChildNumber, DerivationPath, ExtendedPubKey, Fingerprint};
 use bitcoin::{Network, PublicKey};
-use std::fmt;
 use coins_bip32::model::HasPubkey;
-use coins_bip32::{XKey, DerivedXPub};
+use coins_bip32::{DerivedXPub, XKey};
 use std::env::args;
+use std::fmt;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let chain = args().skip(1).next().unwrap_or(String::from("0")).parse::<u32>()?.into();
+    let chain = args()
+        .nth(1)
+        .unwrap_or_else(|| String::from("0"))
+        .parse::<u32>()?
+        .into();
 
     let app = bitcoins_ledger::LedgerBTC::init().await?;
 
@@ -15,12 +19,15 @@ async fn main() -> anyhow::Result<()> {
     let master = app.get_master_xpub().await?;
     let wallet = app.get_xpub(&path.parse()?).await?;
 
-    println!("{}", WalletDescriptor {
-        master_key: into_extended_pub_key(master)?,
-        wallet_path: path.parse()?,
-        wallet_key: into_extended_pub_key(wallet)?,
-        chain,
-    });
+    println!(
+        "{}",
+        WalletDescriptor {
+            master_key: into_extended_pub_key(master)?,
+            wallet_path: path.parse()?,
+            wallet_key: into_extended_pub_key(wallet)?,
+            chain,
+        }
+    );
 
     Ok(())
 }

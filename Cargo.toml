@@ -7,10 +7,14 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[dev-dependencies]
 bitcoin = "0.23.0"
 anyhow = "1"
 bitcoins-ledger = { path = "/home/thomas/src/github.com/summa-tx/bitcoins-rs/ledger-btc" }
 coins-bip32 = { path = "/home/thomas/src/github.com/summa-tx/bitcoins-rs/bip32" }
-
-[dev-dependencies]
 tokio = {version = "0.2", features = ["macros"]}
+jsonrpc_client = { git = "https://github.com/thomaseizinger/rust-jsonrpc-client", branch = "master" }
+serde = { version = "1", features = ["derive"] }
+reqwest = { version = "0.10.7", features = ["blocking", "json"] }
+serde_json = "1"

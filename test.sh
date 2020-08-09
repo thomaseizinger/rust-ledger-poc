@@ -14,10 +14,12 @@ echo "Internal wallet descriptor: $INTERNAL_WALLET_DESCRIPTOR"
 WALLET_NAME="nano-ledger-s-pink"
 
 echo "Importing into wallet $WALLET_NAME"
-#
-#sleep 2
-#
-#node ./import_xpub_into_bitcoind.js $WALLET_NAME "$EXTERNAL_WALLET_DESCRIPTOR" "$INTERNAL_WALLET_DESCRIPTOR"
+
+AUTH=$(docker exec bitcoind-regtest cat /root/.bitcoin/regtest/.cookie)
+
+sleep 2
+
+cargo run --example import_xpub_into_bitcoind $AUTH $WALLET_NAME "$EXTERNAL_WALLET_DESCRIPTOR" "$INTERNAL_WALLET_DESCRIPTOR"
 #
 #ADDRESS=$(node ./get_new_address.js)
 #
