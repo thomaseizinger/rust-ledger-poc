@@ -20,21 +20,23 @@ AUTH=$(docker exec bitcoind-regtest cat /root/.bitcoin/regtest/.cookie)
 sleep 2
 
 cargo run --example import_xpub_into_bitcoind $AUTH $WALLET_NAME "$EXTERNAL_WALLET_DESCRIPTOR" "$INTERNAL_WALLET_DESCRIPTOR"
-#
-#ADDRESS=$(node ./get_new_address.js)
-#
-#echo "Funding address $ADDRESS"
-#
-#docker exec bitcoind-regtest bitcoin-cli -regtest generatetoaddress 101 "$ADDRESS" > /dev/null
-#
-#BALANCE=$(docker exec bitcoind-regtest bitcoin-cli -regtest -rpcwallet=$WALLET_NAME getbalance "*" 0 true)
-#
-#echo "Balance: $BALANCE"
-#
-#test "$BALANCE" != "0.00000000"
-#
-#RAW_TX=$(node ./create_spending_tx.js $WALLET_NAME)
-#
-#echo "Raw spending tx: $RAW_TX"
-#
-#docker exec bitcoind-regtest bitcoin-cli -regtest sendrawtransaction "$RAW_TX"
+
+ADDRESS=$(cargo run --example get_funding_address)
+
+echo "Funding address $ADDRESS"
+
+docker exec bitcoind-regtest bitcoin-cli -regtest generatetoaddress 101 "$ADDRESS" > /dev/null
+
+BALANCE=$(docker exec bitcoind-regtest bitcoin-cli -regtest -rpcwallet=$WALLET_NAME getbalance "*" 0 true)
+
+echo "Balance: $BALANCE"
+
+test "$BALANCE" != "0.00000000"
+
+PSBT=$(docker exec bitcoind-regtest bitcoin-cli -regtest -rpcwallet=$WALLET_NAME walletcreatefundedpsbt '[]' "[{\"$ADDRESS\": \"1\"}]" null "{\"feeRate\": 0}" | jq -r .psbt)
+
+RAW_TX=$(cargo run --example sign_psbt $PSBT)
+
+echo "Raw spending tx: $RAW_TX"
+
+docker exec bitcoind-regtest bitcoin-cli -regtest sendrawtransaction "$RAW_TX"

@@ -126,7 +126,7 @@ struct ImportMultiOptions {
 
 #[derive(Deserialize)]
 struct ImportMultiResult {
-    success: bool
+    success: bool,
 }
 
 #[derive(Deserialize)]
