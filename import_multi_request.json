@@ -1,6 +1,6 @@
 {
   "timestamp": 0,
-  "range": 0,
+  "range": 1000,
   "watchonly": true,
   "keypool": true
 }
