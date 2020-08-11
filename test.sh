@@ -1,6 +1,6 @@
 set -e
 
-docker rm -f bitcoind-regtest > /dev/null
+docker rm -f bitcoind-regtest || true > /dev/null
 docker run -d -p 18443:18443 --name bitcoind-regtest coblox/bitcoin-core:0.20.0 -regtest -txindex=1 -debug -rpcallowip=172.0.0.0/8 -rpcbind=0.0.0.0 -minrelaytxfee=0> /dev/null
 
 sleep 2
