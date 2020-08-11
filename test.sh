@@ -11,15 +11,22 @@ INTERNAL_WALLET_DESCRIPTOR=$(cargo run --example print_wallet_descriptor 1);
 echo "External wallet descriptor: $EXTERNAL_WALLET_DESCRIPTOR"
 echo "Internal wallet descriptor: $INTERNAL_WALLET_DESCRIPTOR"
 
-WALLET_NAME="nano-ledger-s-pink"
+WALLET_NAME="nano-ledger-s"
 
 echo "Importing into wallet $WALLET_NAME"
 
-AUTH=$(docker exec bitcoind-regtest cat /root/.bitcoin/regtest/.cookie)
+# Create wallet
+docker exec bitcoind-regtest bitcoin-cli -regtest createwallet $WALLET_NAME true true > /dev/null
 
 sleep 2
 
-cargo run --example import_xpub_into_bitcoind $AUTH $WALLET_NAME "$EXTERNAL_WALLET_DESCRIPTOR" "$INTERNAL_WALLET_DESCRIPTOR"
+EXTERNAL_WALLET_DESCRIPTOR=$(docker exec bitcoind-regtest bitcoin-cli -regtest getdescriptorinfo "$EXTERNAL_WALLET_DESCRIPTOR" | jq -r '.descriptor')
+INTERNAL_WALLET_DESCRIPTOR=$(docker exec bitcoind-regtest bitcoin-cli -regtest getdescriptorinfo "$INTERNAL_WALLET_DESCRIPTOR" | jq -r '.descriptor')
+
+IMPORT_REQUEST_EXTERNAL=$(jq --arg DESC $EXTERNAL_WALLET_DESCRIPTOR '. + {desc: $DESC, internal: false}' import_multi_request.json)
+IMPORT_REQUEST_INTERNAL=$(jq --arg DESC $INTERNAL_WALLET_DESCRIPTOR '. + {desc: $DESC, internal: true}' import_multi_request.json)
+
+docker exec bitcoind-regtest bitcoin-cli -regtest -rpcwallet=$WALLET_NAME importmulti "[$IMPORT_REQUEST_EXTERNAL, $IMPORT_REQUEST_INTERNAL]" "{\"rescan\": true}" > /dev/null
 
 ADDRESS=$(cargo run --example get_funding_address)
 
