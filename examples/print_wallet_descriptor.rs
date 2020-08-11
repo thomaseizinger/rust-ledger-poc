@@ -15,7 +15,7 @@ async fn main() -> anyhow::Result<()> {
 
     let app = bitcoins_ledger::LedgerBTC::init().await?;
 
-    let path = "m/44'/1'/0'";
+    let path = "m/84'/1'/0'";
     let master = app.get_master_xpub().await?;
     let wallet = app.get_xpub(&path.parse()?).await?;
 
