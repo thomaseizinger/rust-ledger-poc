@@ -9,12 +9,11 @@ edition = "2018"
 [dependencies]
 
 [dev-dependencies]
-bitcoin = "0.23.0"
 anyhow = "1"
+bitcoin = "0.23.0"
 bitcoins-ledger = { git = "https://github.com/summa-tx/bitcoins-rs", branch = "master" }
 coins-bip32 = { git = "https://github.com/summa-tx/bitcoins-rs", branch = "master" }
 bitcoins = { git = "https://github.com/summa-tx/bitcoins-rs", branch = "master" }
+bitcoins-psbt = { git = "https://github.com/summa-tx/bitcoins-rs", branch = "master", features = ["ledger"] }
 tokio = {version = "0.2", features = ["macros"]}
-base64 = "0.12"
-thiserror = "1"
-miniscript = "1.0.0"
+hex = "0.4.2"

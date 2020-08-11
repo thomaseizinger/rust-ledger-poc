@@ -137,6 +137,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "bitcoins-psbt"
+version = "0.1.0-alpha.0"
+source = "git+https://github.com/summa-tx/bitcoins-rs#d73aa7c1a60c50829fac83c455e6b0b58ae31110"
+dependencies = [
+ "bitcoin-spv",
+ "bitcoins",
+ "bitcoins-ledger",
+ "coins-bip32",
+ "coins-core",
+ "futures",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -553,13 +568,12 @@ name = "ledger_nano_s_poc"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "base64",
  "bitcoin",
  "bitcoins",
  "bitcoins-ledger",
+ "bitcoins-psbt",
  "coins-bip32",
- "miniscript",
- "thiserror",
+ "hex",
  "tokio",
 ]
 
@@ -633,15 +647,6 @@ name = "memchr"
 version = "2.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3728d817d99e5ac407411fa471ff9800a778d88a24685968b36824eaf4bee400"
-
-[[package]]
-name = "miniscript"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58f196216a07ade53d91a263b3721057f1f0cfd6f95f3d324626f3f9cf7cdfce"
-dependencies = [
- "bitcoin",
-]
 
 [[package]]
 name = "nix"
